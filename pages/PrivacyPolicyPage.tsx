@@ -50,6 +50,9 @@ const PrivacyPolicyPage: React.FC = () => {
               <li><span className="font-bold">Administrative Fees:</span> These partners pay us an administrative, marketing, or technology fee to receive inquiries. We do not receive a percentage of any legal recovery or insurance payout.</li>
               <li><span className="font-bold">Transfer of Data:</span> We may transfer audio recordings, transcripts, or form data to our Partners to assist them in evaluating your potential claim.</li>
             </ul>
+            <p className="mt-4">
+              We may share your personal information with FCA-authorised claims management companies for the purpose of assessing whether you may have a claim relating to mis-sold or overcharged vehicle finance agreements, including Discretionary Commission Arrangement (DCA) claims. These companies may contact you by telephone, email, or SMS to discuss your potential claim. A list of the specific companies we work with is available on request.
+            </p>
           </section>
 
           <section>

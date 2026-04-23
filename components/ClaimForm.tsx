@@ -217,7 +217,7 @@ const ClaimForm: React.FC = () => {
             <div className="text-xs text-slate-600 leading-snug group-hover:text-slate-800 transition-colors">
               <span className="font-bold text-slate-900">I Agree to the <Link to="/terms" className="underline hover:text-blue-800">Terms</Link> & <Link to="/privacy-policy" className="underline hover:text-blue-800">Privacy Policy</Link></span>
               <p className="mt-1">
-                By ticking this box, I verify my details are correct and consent to ukclaims.org contacting me to discuss my claim.
+                I consent to my personal details being shared with FCA-authorised claims management companies so that they can contact me by telephone, email, and SMS to discuss a potential claim relating to mis-sold or overcharged vehicle finance, including Discretionary Commission Arrangement (DCA) claims.
               </p>
             </div>
           </label>
