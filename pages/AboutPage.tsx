@@ -31,7 +31,7 @@ const AboutPage: React.FC = () => {
             {[
               { icon: Users, label: '10,000+', desc: 'Claims Handled' },
               { icon: Award, label: '95%', desc: 'Success Rate' },
-              { icon: ShieldCheck, label: 'FCA', desc: 'Regulated' },
+              { icon: ShieldCheck, label: 'ICO', desc: 'Registered' },
               { icon: Scale, label: '8+ Years', desc: 'Experience' },
             ].map((item) => (
               <div key={item.label} className="text-center">
@@ -45,7 +45,7 @@ const AboutPage: React.FC = () => {
           <div>
             <h2 className="text-2xl font-bold text-slate-900 mb-4">Accreditations</h2>
             <p className="text-slate-600 leading-relaxed">
-              ukclaims.org is a trading style of Example Legal Ltd, registered in England & Wales. We are authorised and regulated by the Financial Conduct Authority (FCA) and comply with all Solicitors Regulation Authority (SRA) guidelines. We are members of the Claims Management Regulator and adhere to the highest standards of professional conduct.
+              ukclaims.org is operated by Immaculate Ltd, registered in England & Wales. We are registered with the Information Commissioner's Office (ICO), registration number ZB932467, and adhere to the highest standards of data protection and professional conduct.
             </p>
           </div>
         </div>

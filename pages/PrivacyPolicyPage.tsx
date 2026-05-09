@@ -17,7 +17,7 @@ const PrivacyPolicyPage: React.FC = () => {
               This Policy is issued in accordance with the UK General Data Protection Regulation (“UK GDPR”), the Data Protection Act 2018 (“DPA 2018”) and the Privacy and Electronic Communications Regulations 2003 (“PECR”). Our services are intended for residents of the United Kingdom only.
             </p>
             <p className="mt-2">
-              <span className="font-bold">Data Controller:</span> Immaculate Life (a trading name of ML Holdings) is the data controller responsible for your personal data. ICO Registration No.: ZB693604. FCA Reference: 834008.
+              <span className="font-bold">Data Controller:</span> Immaculate Ltd is the data controller responsible for your personal data. ICO Registration No.: ZB932467.
             </p>
           </section>
 
@@ -134,13 +134,13 @@ const PrivacyPolicyPage: React.FC = () => {
             <h2 className="text-xl font-semibold text-slate-900 mb-3">14. Contact Us</h2>
             <p>To exercise your rights, withdraw consent or ask any question about this Policy, please contact:</p>
             <p className="mt-2">
-              <span className="font-bold">Data Controller:</span> Immaculate Life (a trading name of ML Holdings)
+              <span className="font-bold">Data Controller:</span> Immaculate Ltd
             </p>
             <p>
               <span className="font-bold">Email:</span> <a href="mailto:support@ukclaims.org" className="text-blue-600 hover:underline">support@ukclaims.org</a>
             </p>
             <p>
-              <span className="font-bold">ICO Registration:</span> ZB693604
+              <span className="font-bold">ICO Registration:</span> ZB932467
             </p>
             <p>
               <span className="font-bold">Address:</span> United Kingdom
