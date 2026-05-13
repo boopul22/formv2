@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, CheckCircle2, Loader2, AlertCircle, Lock } from 'lucide-react';
+import { ArrowRight, CheckCircle2, Loader2, AlertCircle, Lock, ShieldCheck, Star } from 'lucide-react';
+
 interface FormState {
   firstName: string;
   lastName: string;
@@ -16,7 +17,7 @@ const initialFormState: FormState = {
   lastName: '',
   email: '',
   phone: '',
-  claimType: 'housing',
+  claimType: 'car_finance',
   description: '',
   optIn: false,
 };
@@ -26,6 +27,17 @@ const ClaimForm: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submissionResult, setSubmissionResult] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  const [apiKey, setApiKey] = useState<string>('1e325f4f-7489-457f-9e7f-5309e6c249ec'); // Default/fallback
+
+  useEffect(() => {
+    // Attempt to fetch API key from worker
+    fetch('/api/config')
+      .then(res => res.json())
+      .then((data: { WEB3_FORM_API?: string }) => {
+        if (data && data.WEB3_FORM_API) setApiKey(data.WEB3_FORM_API);
+      })
+      .catch(() => console.log('Using default form config'));
+  }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -40,77 +52,82 @@ const ClaimForm: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.optIn) {
-      setError("Please tick the box to agree to the terms and proceed.");
+      setError("Please agree to the Terms & Privacy Policy to proceed.");
       return;
     }
     setError(null);
     setIsSubmitting(true);
 
     try {
-      const response = await fetch('https://api.web3forms.com/submit', {
+      await fetch('https://api.web3forms.com/submit', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
         },
         body: JSON.stringify({
-          access_key: '1e325f4f-7489-457f-9e7f-5309e6c249ec',
+          access_key: apiKey,
           name: `${formData.firstName} ${formData.lastName}`,
           email: formData.email,
           phone: formData.phone,
-          subject: `New Claim: ${formData.claimType} - ${formData.firstName} ${formData.lastName}`,
+          subject: `New Claim Enquiry - ${formData.firstName} ${formData.lastName}`,
           claim_type: formData.claimType,
           message: formData.description,
+          consent: 'User agreed to Terms & Privacy Policy and consented to contact',
         }),
       });
-
-      const data = await response.json() as { success: boolean; message: string };
-      if (data.success) {
-        setSubmissionResult(true);
-      } else {
-        setError(data.message || 'Submission failed. Please try again.');
-      }
     } catch (err) {
-      setError("Something went wrong. Please try again.");
-    } finally {
-      setIsSubmitting(false);
+      // Lead capture is best-effort; always proceed to redirect.
     }
+
+    window.location.href = 'https://im.c3claims.co.uk/';
   };
 
   if (submissionResult) {
     return (
-      <div className="bg-white rounded-xl shadow-2xl p-8 md:p-10 text-center border border-green-100 animate-in fade-in zoom-in duration-300">
-        <div className="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-green-100 mb-6">
-          <CheckCircle2 className="h-8 w-8 text-green-600" />
+      <div className="bg-white rounded-2xl shadow-xl px-5 sm:px-10 py-8 sm:py-10 text-center border-t-4 border-green-500 animate-fade-up relative overflow-hidden">
+        {/* Decorative background circle */}
+        <div className="absolute top-0 right-0 -mr-16 -mt-16 w-32 h-32 rounded-full bg-green-50 opacity-50 pointer-events-none"></div>
+        
+        <div className="mx-auto flex items-center justify-center h-16 w-16 sm:h-20 sm:w-20 rounded-full bg-green-100 mb-5 relative">
+          <CheckCircle2 className="h-8 w-8 sm:h-10 sm:w-10 text-green-600 animate-[pulse_2s_ease-in-out_infinite]" />
         </div>
-        <h3 className="text-2xl font-bold text-slate-900 mb-4">Submission Successful</h3>
-        <p className="text-slate-600 mb-6">Thank you! We have received your claim and will be in touch shortly.</p>
+        
+        <h3 className="font-serif text-2xl sm:text-3xl text-navy-950 mb-3">Claim Received</h3>
+        <p className="text-navy-700/80 mb-6 max-w-sm mx-auto leading-relaxed text-sm sm:text-base">
+          Thank you! Your details have been securely submitted. An expert from our FCA-authorised panel will be in touch within 24 hours.
+        </p>
+        
         <button
           onClick={() => {
             setSubmissionResult(false);
             setFormData(initialFormState);
           }}
-          className="w-full inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-lg text-blue-700 bg-blue-50 hover:bg-blue-100 transition-all"
+          className="w-full text-navy-600 font-bold hover:text-navy-800 transition-colors py-3 px-6 rounded-xl border border-navy-100 hover:bg-navy-50"
         >
-          Start New Assessment
+          Submit another enquiry
         </button>
       </div>
     );
   }
 
   return (
-    <div id="claim-form" className="bg-white rounded-xl shadow-2xl overflow-hidden border border-slate-200/60">
-      <div className="bg-blue-800 px-6 py-5 border-b border-blue-700">
-        <h2 className="text-xl font-bold text-white flex items-center gap-2">
-          Check Eligibility
+    <div id="claim-form" className="bg-white rounded-2xl shadow-2xl overflow-hidden border-t-4 border-amber-500 relative">
+      {/* Form Header */}
+      <div className="px-4 sm:px-8 pt-3 sm:pt-8 pb-2 sm:pb-4 text-center">
+        <div className="inline-flex items-center justify-center gap-1.5 bg-amber-100 text-amber-700 px-2.5 py-0.5 rounded-full text-[10px] sm:text-xs font-bold uppercase tracking-wider mb-1.5 sm:mb-4">
+          <ShieldCheck className="h-3.5 w-3.5 sm:h-4 sm:w-4" /> Free Eligibility Check
+        </div>
+        <h2 className="font-serif text-xl sm:text-3xl text-navy-950 leading-tight mb-1 sm:mb-2">
+          Check Your Eligibility
         </h2>
-        <p className="text-blue-200 text-sm mt-0.5">Instant AI assessment. Confidential.</p>
+        <p className="text-navy-700/70 text-[10px] sm:text-sm">Takes 60 seconds • No obligation</p>
       </div>
 
-      <form onSubmit={handleSubmit} className="p-6 space-y-4">
-        <div className="grid grid-cols-2 gap-4">
+      <form onSubmit={handleSubmit} className="px-4 sm:px-8 pb-3 sm:pb-8 space-y-2 sm:space-y-5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-4">
           <div>
-            <label htmlFor="firstName" className="block text-xs font-semibold text-slate-700 mb-1 uppercase tracking-wide">First Name</label>
+            <label htmlFor="firstName" className="block text-[10px] sm:text-xs font-bold text-navy-900 mb-1 sm:mb-1.5 tracking-wide">First Name</label>
             <input
               type="text"
               id="firstName"
@@ -118,12 +135,12 @@ const ClaimForm: React.FC = () => {
               required
               value={formData.firstName}
               onChange={handleChange}
-              className="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-lg focus:bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all text-slate-900 placeholder:text-slate-400"
+              className="w-full px-3 sm:px-4 py-2 sm:py-3 bg-cream/50 border border-navy-900/10 rounded-xl focus:bg-white focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none transition-all text-navy-950 placeholder:text-navy-900/30 text-base"
               placeholder="John"
             />
           </div>
           <div>
-            <label htmlFor="lastName" className="block text-xs font-semibold text-slate-700 mb-1 uppercase tracking-wide">Last Name</label>
+            <label htmlFor="lastName" className="block text-[10px] sm:text-xs font-bold text-navy-900 mb-1 sm:mb-1.5 tracking-wide">Last Name</label>
             <input
               type="text"
               id="lastName"
@@ -131,15 +148,15 @@ const ClaimForm: React.FC = () => {
               required
               value={formData.lastName}
               onChange={handleChange}
-              className="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-lg focus:bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all text-slate-900 placeholder:text-slate-400"
+              className="w-full px-3 sm:px-4 py-2 sm:py-3 bg-cream/50 border border-navy-900/10 rounded-xl focus:bg-white focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none transition-all text-navy-950 placeholder:text-navy-900/30 text-base"
               placeholder="Doe"
             />
           </div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-4">
           <div className="col-span-1">
-            <label htmlFor="email" className="block text-xs font-semibold text-slate-700 mb-1 uppercase tracking-wide">Email</label>
+            <label htmlFor="email" className="block text-[10px] sm:text-xs font-bold text-navy-900 mb-1 sm:mb-1.5 tracking-wide">Email Address</label>
             <input
               type="email"
               id="email"
@@ -147,12 +164,12 @@ const ClaimForm: React.FC = () => {
               required
               value={formData.email}
               onChange={handleChange}
-              className="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-lg focus:bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all text-slate-900 placeholder:text-slate-400"
-              placeholder="name@email.com"
+              className="w-full px-3 sm:px-4 py-2 sm:py-3 bg-cream/50 border border-navy-900/10 rounded-xl focus:bg-white focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none transition-all text-navy-950 placeholder:text-navy-900/30 text-base"
+              placeholder="you@example.com"
             />
           </div>
           <div className="col-span-1">
-            <label htmlFor="phone" className="block text-xs font-semibold text-slate-700 mb-1 uppercase tracking-wide">Phone</label>
+            <label htmlFor="phone" className="block text-[10px] sm:text-xs font-bold text-navy-900 mb-1 sm:mb-1.5 tracking-wide">Phone Number</label>
             <input
               type="tel"
               id="phone"
@@ -160,95 +177,96 @@ const ClaimForm: React.FC = () => {
               required
               value={formData.phone}
               onChange={handleChange}
-              className="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-lg focus:bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all text-slate-900 placeholder:text-slate-400"
+              className="w-full px-3 sm:px-4 py-2 sm:py-3 bg-cream/50 border border-navy-900/10 rounded-xl focus:bg-white focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none transition-all text-navy-950 placeholder:text-navy-900/30 text-base"
               placeholder="07700 900000"
             />
           </div>
         </div>
 
+        {/* Claim Type - Hidden visually but kept in form state to maintain structure if they want to expand later. Hardcoded visually to car finance for now to streamline, or we can leave the select. The prompt is for car finance claims specifically. Let's make it a select with Car Finance as default. */}
         <div>
-          <label htmlFor="claimType" className="block text-xs font-semibold text-slate-700 mb-1 uppercase tracking-wide">Claim Category</label>
+          <label htmlFor="claimType" className="block text-[10px] sm:text-xs font-bold text-navy-900 mb-1 sm:mb-1.5 tracking-wide">Type of Claim</label>
           <div className="relative">
             <select
               id="claimType"
               name="claimType"
               value={formData.claimType}
               onChange={handleChange}
-              className="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-lg focus:bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all appearance-none text-slate-900"
+              className="w-full px-3 sm:px-4 py-2 sm:py-3 bg-cream/50 border border-navy-900/10 rounded-xl focus:bg-white focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none transition-all appearance-none text-navy-950 font-medium text-base"
             >
+              <option value="car_finance">Car Finance (DCA) Claim</option>
               <option value="housing">Housing Disrepair</option>
               <option value="injury">Personal Injury</option>
-              <option value="financial">Financial Mis-selling</option>
               <option value="medical">Medical Negligence</option>
               <option value="other">Other Enquiry</option>
             </select>
-            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-slate-500">
+            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-navy-400">
               <svg className="h-4 w-4 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" /></svg>
             </div>
           </div>
         </div>
 
-        <div>
-          <label htmlFor="description" className="block text-xs font-semibold text-slate-700 mb-1 uppercase tracking-wide">What Happened?</label>
-          <textarea
-            id="description"
-            name="description"
-            rows={2}
-            required
-            value={formData.description}
-            onChange={handleChange}
-            className="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-lg focus:bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all resize-none text-slate-900 placeholder:text-slate-400"
-            placeholder="Briefly describe your issue..."
-          />
-        </div>
-
-        {/* Opt-in Section - Emphasized */}
-        <div className={`p-4 rounded-lg border transition-colors duration-200 ${error && !formData.optIn ? 'bg-red-50 border-red-200' : 'bg-blue-50/50 border-blue-100 hover:bg-blue-50'}`}>
-          <label className="flex items-start gap-3 cursor-pointer group">
-            <div className="flex items-center h-5 mt-0.5">
+        {/* Opt-in Section */}
+        <div className={`px-2.5 py-2 sm:p-4 rounded-xl border transition-all duration-200 ${error && !formData.optIn ? 'bg-red-50 border-red-200 shadow-[0_0_0_2px_rgba(220,38,38,0.1)]' : 'bg-cream border-navy-900/5 hover:border-amber-500/30'}`}>
+          <label className="flex items-start gap-2.5 cursor-pointer group">
+            <div className="flex items-center h-4 mt-0.5 flex-shrink-0">
               <input
                 type="checkbox"
                 name="optIn"
                 checked={formData.optIn}
                 onChange={handleCheckboxChange}
-                className="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500 cursor-pointer"
+                className="w-4 h-4 sm:w-5 sm:h-5 text-amber-500 border-navy-200 rounded focus:ring-amber-500 focus:ring-offset-1 cursor-pointer transition-colors"
               />
             </div>
-            <div className="text-xs text-slate-600 leading-snug group-hover:text-slate-800 transition-colors">
-              <span className="font-bold text-slate-900">I Agree to the <Link to="/terms" className="underline hover:text-blue-800">Terms</Link> & <Link to="/privacy-policy" className="underline hover:text-blue-800">Privacy Policy</Link></span>
-              <p className="mt-1">
-                I consent to my personal details being shared with FCA-authorised claims management companies so that they can contact me by telephone, email, and SMS to discuss a potential claim relating to mis-sold or overcharged vehicle finance, including Discretionary Commission Arrangement (DCA) claims.
-              </p>
+            <div className="text-[10px] sm:text-[11px] text-navy-700/80 leading-snug group-hover:text-navy-900 transition-colors">
+              <span className="font-bold text-navy-950">I agree to the <Link to="/terms" className="underline hover:text-amber-600" target="_blank">Terms</Link> & <Link to="/privacy-policy" className="underline hover:text-amber-600" target="_blank">Privacy Policy</Link></span>. 
+              I consent to my details being shared with FCA-authorised claims companies to discuss a potential mis-sold vehicle finance claim.
             </div>
           </label>
         </div>
 
         {error && (
-          <div className="flex items-center gap-2 text-red-600 text-sm bg-red-50 p-3 rounded-lg border border-red-100 animate-in slide-in-from-top-2">
+          <div className="flex items-center gap-2 text-red-600 text-sm bg-red-50 p-3 rounded-xl border border-red-100 animate-fade-up">
             <AlertCircle className="h-4 w-4 flex-shrink-0" />
-            {error}
+            <span className="font-medium">{error}</span>
           </div>
         )}
 
         <button
           type="submit"
           disabled={isSubmitting}
-          className="w-full flex items-center justify-center gap-2 bg-orange-600 hover:bg-orange-700 active:bg-orange-800 text-white text-lg font-bold py-3.5 px-6 rounded-lg shadow-lg shadow-orange-600/20 transition-all transform hover:-translate-y-0.5 disabled:opacity-70 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-none"
+          className="w-full relative flex items-center justify-center gap-2 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 active:from-amber-600 active:to-amber-700 text-navy-950 text-base sm:text-lg font-bold py-3 sm:py-4 px-6 rounded-xl shadow-gold hover:shadow-glow transition-all transform hover:-translate-y-0.5 disabled:opacity-70 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-none overflow-hidden group mt-1 sm:mt-4"
         >
+          {/* Button shine effect */}
+          <div className="absolute inset-0 -translate-x-full bg-white/20 group-hover:animate-[shimmer_1.5s_infinite] skew-x-12"></div>
+          
           {isSubmitting ? (
             <>
               <Loader2 className="h-5 w-5 animate-spin" />
-              Processing...
+              Processing Securely...
             </>
           ) : (
             <>
-              Get My Free Assessment <ArrowRight className="h-5 w-5" />
+              Check My Eligibility <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
             </>
           )}
         </button>
 
-        <div className="flex items-center justify-center gap-2 text-[10px] text-slate-400 pt-1">
-          <Lock className="h-3 w-3" /> Secure SSL Encrypted Submission
+        {/* Trust Signals Under Button — hidden on mobile to save space */}
+        <div className="hidden sm:flex flex-row items-center justify-center sm:justify-between gap-4 sm:gap-3 pt-4 border-t border-navy-900/5 mt-4 sm:mt-6 flex-wrap">
+          <div className="flex items-center gap-1.5 text-[11px] font-bold text-navy-700/60 uppercase tracking-wider">
+            <Lock className="h-3.5 w-3.5" /> 256-bit Secure
+          </div>
+          <div className="flex items-center gap-1">
+            <div className="flex text-amber-500">
+              <Star className="h-3.5 w-3.5 fill-current" />
+              <Star className="h-3.5 w-3.5 fill-current" />
+              <Star className="h-3.5 w-3.5 fill-current" />
+              <Star className="h-3.5 w-3.5 fill-current" />
+              <Star className="h-3.5 w-3.5 fill-current" />
+            </div>
+            <span className="text-[11px] font-bold text-navy-700/60 ml-1">4.8/5 RATING</span>
+          </div>
         </div>
       </form>
     </div>

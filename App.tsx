@@ -6,9 +6,6 @@ import HomePage from './pages/HomePage';
 import AboutPage from './pages/AboutPage';
 import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
 import TermsPage from './pages/TermsPage';
-import RepoFormPage from './pages/RepoFormPage';
-import ActivatePage from './pages/ActivatePage';
-
 
 const ScrollToTop: React.FC = () => {
   const { pathname } = useLocation();
@@ -20,17 +17,15 @@ const ScrollToTop: React.FC = () => {
 
 const App: React.FC = () => {
   return (
-    <div className="min-h-screen flex flex-col bg-slate-50">
+    <div className="min-h-screen flex flex-col font-sans">
       <ScrollToTop />
       <Navbar />
-      <main className="flex-grow flex flex-col">
+      <main className="flex-grow flex flex-col relative z-10">
         <Routes>
           <Route path="/" element={<HomePage />} />
-
           <Route path="/about" element={<AboutPage />} />
           <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
           <Route path="/terms" element={<TermsPage />} />
-          <Route path="/activate" element={<ActivatePage />} />
         </Routes>
       </main>
       <Footer />

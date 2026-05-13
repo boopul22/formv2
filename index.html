@@ -2,17 +2,109 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>ukclaims.org - Professional Claim Assistance</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>Check Your Car Finance Claim | ukclaims.online</title>
+    <meta name="description" content="Were you overcharged on car finance? Check your eligibility for a mis-sold car finance claim in 60 seconds. No Win, No Fee. FCA-authorised partners.">
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              navy: {
+                950: '#07111F',
+                900: '#0B1D3A',
+                800: '#122B52',
+                700: '#1A3A6B',
+                600: '#234E8F',
+              },
+              amber: {
+                300: '#F5D08A',
+                400: '#F0BC5E',
+                500: '#E8A838',
+                600: '#C48A1E',
+              },
+              cream: '#FBF7F0',
+            },
+            fontFamily: {
+              sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+              serif: ['"DM Serif Display"', 'serif'],
+            },
+            boxShadow: {
+              'gold': '0 4px 16px rgba(232, 168, 56, 0.25)',
+              'glow': '0 0 20px rgba(232, 168, 56, 0.4)',
+            }
+          }
+        }
+      }
+    </script>
     <style>
       body {
-        font-family: 'Inter', sans-serif;
+        font-family: 'Plus Jakarta Sans', sans-serif;
+      }
+      .bg-noise {
+        position: relative;
+      }
+      .bg-noise::before {
+        content: "";
+        position: absolute;
+        top: 0; left: 0; width: 100%; height: 100%;
+        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E");
+        pointer-events: none;
+        z-index: 0;
+      }
+      @keyframes fadeUp {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+      .animate-fade-up {
+        animation: fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      }
+      .opacity-0 { opacity: 0; }
+      .animation-delay-100 { animation-delay: 100ms; }
+      .animation-delay-200 { animation-delay: 200ms; }
+      .animation-delay-300 { animation-delay: 300ms; }
+      .animation-delay-400 { animation-delay: 400ms; }
+      .animation-delay-500 { animation-delay: 500ms; }
+      
+      .no-scrollbar::-webkit-scrollbar { display: none; }
+      .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+      
+      /* Base focus styles */
+      *:focus-visible {
+        outline: 2px solid #E8A838;
+        outline-offset: 2px;
+      }
+
+      /* Mobile: prevent iOS 300ms tap delay */
+      a, button, [role="button"] {
+        touch-action: manipulation;
+      }
+
+      /* Mobile: prevent zoom on input focus (iOS) — 16px floor */
+      input, select, textarea {
+        font-size: max(16px, 1em);
+      }
+
+      /* Mobile: full height hero fix for mobile browsers */
+      .min-h-screen {
+        min-height: 100vh;
+        min-height: -webkit-fill-available;
+      }
+
+      /* Mobile: safe area padding for notched devices */
+      body {
+        padding-left: env(safe-area-inset-left);
+        padding-right: env(safe-area-inset-right);
+        padding-bottom: env(safe-area-inset-bottom);
       }
     </style>
   </head>
-  <body class="bg-slate-50 text-slate-900 antialiased">
+  <body class="bg-cream text-navy-900 antialiased selection:bg-amber-500 selection:text-white">
     <div id="root"></div>
     <script type="module" src="/index.tsx"></script>
   </body>
