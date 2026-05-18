@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Scale, Phone, ArrowRight } from 'lucide-react';
+import { Scale, ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const TermsPage: React.FC = () => {
@@ -130,16 +130,14 @@ const TermsPage: React.FC = () => {
             <h2 className="font-serif text-2xl text-navy-950 mb-6">Need to speak with us?</h2>
             
             <div className="flex flex-col sm:flex-row gap-6">
-              <a href="tel:08001234567" className="flex items-center gap-4 bg-navy-950 text-white p-6 rounded-xl hover:bg-navy-900 transition-colors group flex-1">
-                <div className="bg-amber-500/20 p-3 rounded-full group-hover:bg-amber-500/30 transition-colors">
-                  <Phone className="h-6 w-6 text-amber-500" />
-                </div>
+              <a href="mailto:support@ukclaims.online" className="flex items-center justify-between gap-4 bg-navy-950 text-white p-6 rounded-xl hover:bg-navy-900 transition-colors group flex-1">
                 <div>
-                  <p className="text-sm text-navy-200 mb-1 uppercase tracking-wider font-bold">Freephone Support</p>
-                  <p className="text-xl font-bold">0800 123 4567</p>
+                  <p className="text-sm text-navy-200 mb-1 uppercase tracking-wider font-bold">Email Support</p>
+                  <p className="text-xl font-bold">support@ukclaims.online</p>
                 </div>
+                <ArrowRight className="h-6 w-6 group-hover:translate-x-1 transition-transform" />
               </a>
-              
+
               <Link to="/#claim-form" className="flex items-center justify-between gap-4 bg-amber-500 text-navy-950 p-6 rounded-xl hover:bg-amber-400 transition-colors group flex-1">
                 <div>
                   <p className="text-sm text-navy-900/70 mb-1 uppercase tracking-wider font-bold">Ready to proceed?</p>

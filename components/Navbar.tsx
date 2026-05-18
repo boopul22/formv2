@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { ShieldCheck, Menu, X, Phone } from 'lucide-react';
+import { ShieldCheck, Menu, X } from 'lucide-react';
 
 const Navbar: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -50,15 +50,8 @@ const Navbar: React.FC = () => {
             <a href="/#faq" className="text-sm text-white/80 hover:text-amber-400 font-medium transition-colors">FAQ</a>
             
             <div className="flex items-center gap-6 ml-4">
-              <a href="tel:08001234567" className="flex items-center gap-2 text-white hover:text-amber-400 transition-colors group">
-                <div className="bg-white/10 p-2 rounded-full group-hover:bg-amber-500/20 transition-colors">
-                  <Phone className="h-4 w-4" />
-                </div>
-                <span className="font-bold tracking-wide">0800 123 4567</span>
-              </a>
-              
-              <Link 
-                to="/#claim-form" 
+              <Link
+                to="/#claim-form"
                 className="bg-amber-500 hover:bg-amber-400 text-navy-950 px-6 py-2.5 rounded-full font-bold shadow-gold hover:shadow-glow transition-all transform hover:-translate-y-0.5"
               >
                 Start Your Claim
@@ -68,9 +61,6 @@ const Navbar: React.FC = () => {
 
           {/* Mobile Menu Button */}
           <div className="flex items-center md:hidden gap-4">
-            <a href="tel:08001234567" className="bg-white/10 text-white p-2 rounded-full hover:bg-amber-500/20 hover:text-amber-400 transition-colors">
-              <Phone className="h-5 w-5" />
-            </a>
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
               className="text-white hover:text-amber-400 focus:outline-none p-1"

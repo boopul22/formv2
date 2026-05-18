@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { ShieldCheck, Mail, Phone, MapPin, ArrowRight } from 'lucide-react';
+import { ShieldCheck, Mail, MapPin, ArrowRight } from 'lucide-react';
 
 const Footer: React.FC = () => {
   return (
@@ -31,6 +31,9 @@ const Footer: React.FC = () => {
                 ICO REGISTERED
               </div>
             </div>
+            <p className="text-[11px] leading-relaxed text-white/50 pt-3">
+              C3 Claims is a trading style of Bamboo Marketing NW Limited. Bamboo Marketing NW Limited is authorised and regulated by the Financial Conduct Authority. C3 Claims may receive a referral fee from a regulated solicitor or claims management company if your claim proceeds. This does not increase the cost to you. You do not need to use a claims management company. You can complain directly to the lender or use the Financial Ombudsman Service.
+            </p>
           </div>
 
           {/* Column 2: Quick Links */}
@@ -58,17 +61,6 @@ const Footer: React.FC = () => {
           <div>
             <h3 className="font-serif text-xl mb-6 text-white">Contact Us</h3>
             <ul className="space-y-4">
-              <li>
-                <a href="tel:08001234567" className="flex items-start gap-3 text-white/70 hover:text-amber-400 transition-colors group">
-                  <div className="mt-1 bg-white/10 p-1.5 rounded-full group-hover:bg-amber-500/20 transition-colors">
-                    <Phone className="h-4 w-4" />
-                  </div>
-                  <div>
-                    <span className="block text-xs uppercase tracking-wider text-white/50 mb-0.5">Freephone</span>
-                    <span className="font-bold text-white group-hover:text-amber-400">0800 123 4567</span>
-                  </div>
-                </a>
-              </li>
               <li>
                 <a href="mailto:support@ukclaims.online" className="flex items-start gap-3 text-white/70 hover:text-amber-400 transition-colors group">
                   <div className="mt-1 bg-white/10 p-1.5 rounded-full group-hover:bg-amber-500/20 transition-colors">
