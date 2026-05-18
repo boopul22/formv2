@@ -27,7 +27,7 @@ const ClaimForm: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submissionResult, setSubmissionResult] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
-  const [apiKey, setApiKey] = useState<string>('1e325f4f-7489-457f-9e7f-5309e6c249ec'); // Default/fallback
+  const [apiKey, setApiKey] = useState<string>('');
 
   useEffect(() => {
     // Attempt to fetch API key from worker
