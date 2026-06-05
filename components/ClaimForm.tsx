@@ -70,13 +70,22 @@ const ClaimForm: React.FC = () => {
     setIsSubmitting(true);
 
     try {
-      await fetch('/api/submit', {
+      // 1. Pull the access key + authoritative IP/geo from our same-origin
+      //    Worker (no third-party lookup, no rate limits).
+      const meta = await fetch('/api/meta')
+        .then(res => res.json())
+        .catch(() => ({} as Record<string, string>));
+
+      // 2. Submit directly to Web3Forms from the browser — their API requires
+      //    client-side submission, so we can't proxy it through the Worker.
+      await fetch('https://api.web3forms.com/submit', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
         },
         body: JSON.stringify({
+          access_key: meta.access_key || '',
           name: `${formData.firstName} ${formData.lastName}`,
           email: formData.email,
           phone: formData.phone,
@@ -84,7 +93,13 @@ const ClaimForm: React.FC = () => {
           claim_type: formData.claimType,
           message: formData.description,
           consent: 'User agreed to Terms & Privacy Policy and consented to contact',
-          page_url: window.location.href,
+          website: window.location.hostname,
+          source_url: window.location.href,
+          ip_address: meta.ip_address || 'Unknown',
+          location: meta.location || 'Unknown',
+          isp_network: meta.isp_network || 'Unknown',
+          coordinates: meta.coordinates || 'Unknown',
+          edge_timezone: meta.edge_timezone || 'Unknown',
           ...getDeviceData(),
         }),
       });
