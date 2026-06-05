@@ -8,15 +8,48 @@ export default {
     async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
         const url = new URL(request.url);
 
-        // API endpoint to serve environment variables
-        if (url.pathname === '/api/config') {
-            return new Response(JSON.stringify({
-                WEB3_FORM_API: env.WEB3_FORM_API
-            }), {
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Access-Control-Allow-Origin': '*' // Allow CORS if needed, or adjust as necessary
-                }
+        // Form submission proxy: injects the visitor IP + source info, then
+        // forwards to Web3Forms using the secret access key (kept server-side).
+        if (url.pathname === '/api/submit' && request.method === 'POST') {
+            let payload: Record<string, unknown> = {};
+            try {
+                payload = await request.json();
+            } catch {
+                return new Response(JSON.stringify({ success: false, message: 'Invalid request body' }), {
+                    status: 400,
+                    headers: { 'Content-Type': 'application/json' },
+                });
+            }
+
+            const cf = (request as any).cf || {};
+            const ip = request.headers.get('CF-Connecting-IP') || 'unknown';
+            const country = cf.country || 'unknown';
+            const city = cf.city || 'unknown';
+            const region = cf.region || 'unknown';
+            // The page the visitor submitted from (sent by the client), with the
+            // Referer header as a fallback.
+            const sourceUrl = (payload.page_url as string) || request.headers.get('Referer') || 'unknown';
+            const website = url.hostname;
+
+            const forwarded = {
+                ...payload,
+                access_key: env.WEB3_FORM_API,
+                website,
+                source_url: sourceUrl,
+                ip_address: ip,
+                location: `${city}, ${region}, ${country}`,
+            };
+            delete (forwarded as any).page_url;
+
+            const res = await fetch('https://api.web3forms.com/submit', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+                body: JSON.stringify(forwarded),
+            });
+
+            return new Response(await res.text(), {
+                status: res.status,
+                headers: { 'Content-Type': 'application/json' },
             });
         }
 

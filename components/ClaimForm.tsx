@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, CheckCircle2, Loader2, AlertCircle, Lock, ShieldCheck, Star } from 'lucide-react';
 
@@ -27,17 +27,6 @@ const ClaimForm: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submissionResult, setSubmissionResult] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
-  const [apiKey, setApiKey] = useState<string>('');
-
-  useEffect(() => {
-    // Attempt to fetch API key from worker
-    fetch('/api/config')
-      .then(res => res.json())
-      .then((data: { WEB3_FORM_API?: string }) => {
-        if (data && data.WEB3_FORM_API) setApiKey(data.WEB3_FORM_API);
-      })
-      .catch(() => console.log('Using default form config'));
-  }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -59,14 +48,13 @@ const ClaimForm: React.FC = () => {
     setIsSubmitting(true);
 
     try {
-      await fetch('https://api.web3forms.com/submit', {
+      await fetch('/api/submit', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
         },
         body: JSON.stringify({
-          access_key: apiKey,
           name: `${formData.firstName} ${formData.lastName}`,
           email: formData.email,
           phone: formData.phone,
@@ -74,6 +62,7 @@ const ClaimForm: React.FC = () => {
           claim_type: formData.claimType,
           message: formData.description,
           consent: 'User agreed to Terms & Privacy Policy and consented to contact',
+          page_url: window.location.href,
         }),
       });
     } catch (err) {
