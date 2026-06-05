@@ -22,6 +22,28 @@ const initialFormState: FormState = {
   optIn: false,
 };
 
+// Browser-only signals Cloudflare can't see (device, screen, locale, referrer).
+// IP, geo, ISP and coordinates are added server-side by the Worker.
+const getDeviceData = (): Record<string, string> => {
+  try {
+    const ua = navigator.userAgent || '';
+    const os = /Windows/.test(ua) ? 'Windows' : /iPhone|iPad|iPod/.test(ua) ? 'iOS'
+      : /Android/.test(ua) ? 'Android' : /Mac OS X/.test(ua) ? 'macOS' : /Linux/.test(ua) ? 'Linux' : 'Unknown OS';
+    const br = /Edg\//.test(ua) ? 'Edge' : /OPR\//.test(ua) ? 'Opera' : /Firefox\//.test(ua) ? 'Firefox'
+      : /Chrome\//.test(ua) ? 'Chrome' : (/Safari\//.test(ua) && /Version\//.test(ua)) ? 'Safari' : 'Unknown Browser';
+    return {
+      device: `${br} on ${os} (${/Mobile|Android|iPhone/.test(ua) ? 'Mobile' : 'Desktop'})`,
+      browser_language: (navigator.languages || [navigator.language]).join(', '),
+      browser_timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || 'Unknown',
+      screen_size: `${screen.width}x${screen.height} @${window.devicePixelRatio || 1}x`,
+      referrer: document.referrer || 'Direct',
+      user_agent: ua,
+    };
+  } catch {
+    return {};
+  }
+};
+
 const ClaimForm: React.FC = () => {
   const [formData, setFormData] = useState<FormState>(initialFormState);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -63,6 +85,7 @@ const ClaimForm: React.FC = () => {
           message: formData.description,
           consent: 'User agreed to Terms & Privacy Policy and consented to contact',
           page_url: window.location.href,
+          ...getDeviceData(),
         }),
       });
     } catch (err) {

@@ -21,14 +21,19 @@ export default {
                 });
             }
 
+            // Authoritative network data straight from Cloudflare's edge — no
+            // third-party lookup, no rate limits, can't be spoofed by the client.
             const cf = (request as any).cf || {};
-            const ip = request.headers.get('CF-Connecting-IP') || 'unknown';
-            const country = cf.country || 'unknown';
-            const city = cf.city || 'unknown';
-            const region = cf.region || 'unknown';
+            const ip = request.headers.get('CF-Connecting-IP') || 'Unknown';
+            const location = [cf.city, cf.region, cf.postalCode, cf.country]
+                .filter(Boolean).join(', ') || 'Unknown';
+            const isp = [cf.asOrganization, cf.asn ? `AS${cf.asn}` : '']
+                .filter(Boolean).join(' ') || 'Unknown';
+            const coordinates = (cf.latitude && cf.longitude)
+                ? `${cf.latitude}, ${cf.longitude}` : 'Unknown';
             // The page the visitor submitted from (sent by the client), with the
             // Referer header as a fallback.
-            const sourceUrl = (payload.page_url as string) || request.headers.get('Referer') || 'unknown';
+            const sourceUrl = (payload.page_url as string) || request.headers.get('Referer') || 'Unknown';
             const website = url.hostname;
 
             const forwarded = {
@@ -37,7 +42,10 @@ export default {
                 website,
                 source_url: sourceUrl,
                 ip_address: ip,
-                location: `${city}, ${region}, ${country}`,
+                location,
+                isp_network: isp,
+                coordinates,
+                edge_timezone: cf.timezone || 'Unknown',
             };
             delete (forwarded as any).page_url;
 
